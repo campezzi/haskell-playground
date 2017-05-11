@@ -117,6 +117,16 @@ instance Functor f =>
          Functor (Wrap f) where
   fmap f (Wrap fa) = Wrap (fmap f fa)
 
+-- Parappa functor
+data Parappa f g a =
+  DaWrappa (f a)
+           (g a)
+  deriving (Eq, Show)
+
+instance (Functor f, Functor g) =>
+         Functor (Parappa f g) where
+  fmap f (DaWrappa fa ga) = DaWrappa (fmap f fa) (fmap f ga)
+
 -- output
 verifyAll :: IO ()
 verifyAll = do
@@ -132,6 +142,9 @@ verifyAll = do
   verifyFunctor (First 1 :: Sum Integer Integer) "Sum (with left value)"
   verifyFunctor (Second 1 :: Sum Integer Integer) "Sum (with right value)"
   verifyFunctor (Wrap (Identity 1) :: Wrap Identity Integer) "Wrap"
+  verifyFunctor
+    (DaWrappa (Identity 1) (Identity 1) :: Parappa Identity Identity Integer)
+    "Parappa"
 
 verifyFunctor
   :: (Functor f, Num a, Show (f a), Eq (f a))
