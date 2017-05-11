@@ -12,13 +12,13 @@ verifyIdentity f = (valid, result)
 verifyComposition
   :: (Num a, Functor f, Eq (f a))
   => f a -> (Bool, f a, f a)
-verifyComposition x = (valid, resultA, resultB)
+verifyComposition x = (valid, separate, fused)
   where
     f = (+ 1)
     g = (* 2)
-    resultA = (fmap g (fmap f x))
-    resultB = (fmap (g . f) x)
-    valid = resultA == resultB
+    separate = (fmap g) . (fmap f) $ x
+    fused = fmap (g . f) x
+    valid = separate == fused
 
 -- Identity functor
 newtype Identity a =
