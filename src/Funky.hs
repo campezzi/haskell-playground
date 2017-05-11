@@ -88,6 +88,35 @@ data Four' a b =
 instance Functor (Four' a) where
   fmap f (Four' a b c d) = Four' a b c (f d)
 
+-- Possibly functor
+data Possibly a
+  = LolNope
+  | Yeppers a
+  deriving (Eq, Show)
+
+instance Functor Possibly where
+  fmap _ LolNope = LolNope
+  fmap f (Yeppers a) = Yeppers (f a)
+
+-- Sum functor
+data Sum a b
+  = First a
+  | Second b
+  deriving (Eq, Show)
+
+instance Functor (Sum a) where
+  fmap _ (First a) = First a
+  fmap f (Second b) = Second (f b)
+
+-- Wrap functor
+data Wrap f a =
+  Wrap (f a)
+  deriving (Eq, Show)
+
+instance Functor f =>
+         Functor (Wrap f) where
+  fmap f (Wrap fa) = Wrap (fmap f fa)
+
 -- output
 verifyAll :: IO ()
 verifyAll = do
@@ -98,6 +127,11 @@ verifyAll = do
   verifyFunctor (Three' 0 1 1 :: Three' Integer Integer) "Three'"
   verifyFunctor (Four 0 0 0 1 :: Four Integer Integer Integer Integer) "Four"
   verifyFunctor (Four' 0 0 0 1 :: Four' Integer Integer) "Four"
+  verifyFunctor (Yeppers 1 :: Possibly Integer) "Possibly (with value)"
+  verifyFunctor (LolNope :: Possibly Integer) "Possibly (without value)"
+  verifyFunctor (First 1 :: Sum Integer Integer) "Sum (with left value)"
+  verifyFunctor (Second 1 :: Sum Integer Integer) "Sum (with right value)"
+  verifyFunctor (Wrap (Identity 1) :: Wrap Identity Integer) "Wrap"
 
 verifyFunctor
   :: (Functor f, Num a, Show (f a), Eq (f a))
