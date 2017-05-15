@@ -1,6 +1,6 @@
 module Main where
 
-import Fmappin
+import CheckEm
 
 main :: IO ()
-main = fmappinDemo
+main = checkEm
