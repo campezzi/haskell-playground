@@ -32,7 +32,7 @@ instance Arbitrary a =>
   arbitrary = do
     x <- arbitrary
     xs <- arbitrary
-    frequency [(1, return Nil), (3, return $ Cons x xs)]
+    frequency [(1, return Nil), (2, return $ Cons x xs)]
 
 instance Eq a =>
          EqProp (List a) where
