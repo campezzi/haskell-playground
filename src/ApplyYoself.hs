@@ -1,6 +1,8 @@
 module ApplyYoself where
 
 import Control.Applicative
+import Test.QuickCheck
+import Test.QuickCheck.Checkers
 
 newtype AIdentity a =
   AIdentity a
@@ -12,6 +14,16 @@ instance Functor AIdentity where
 instance Applicative AIdentity where
   pure = AIdentity
   (<*>) (AIdentity f) (AIdentity x) = AIdentity (f x)
+
+instance Arbitrary a =>
+         Arbitrary (AIdentity a) where
+  arbitrary = do
+    x <- arbitrary
+    return (AIdentity x)
+
+instance Eq a =>
+         EqProp (AIdentity a) where
+  (=-=) (AIdentity a) (AIdentity b) = property (a == b)
 
 --
 newtype AConstant a b = AConstant
@@ -25,6 +37,16 @@ instance Monoid a =>
          Applicative (AConstant a) where
   pure _ = AConstant mempty
   (<*>) (AConstant a) (AConstant b) = AConstant (mappend a b)
+
+instance (Arbitrary a) =>
+         Arbitrary (AConstant a b) where
+  arbitrary = do
+    a <- arbitrary
+    return (AConstant a)
+
+instance Eq a =>
+         EqProp (AConstant a b) where
+  (=-=) (AConstant a) (AConstant b) = property (a == b)
 
 --
 validateLength :: Int -> String -> Maybe String
