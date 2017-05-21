@@ -13,6 +13,11 @@ data List a
 toMyList :: [a] -> List a
 toMyList = foldr Cons Nil
 
+take' :: Int -> List a -> List a
+take' 0 _ = Nil
+take' _ Nil = Nil
+take' n (Cons x xs) = Cons x (take' (n - 1) xs)
+
 appendList :: List a -> List a -> List a
 appendList Nil ys = ys
 appendList (Cons x xs) ys = Cons x (appendList xs ys)
