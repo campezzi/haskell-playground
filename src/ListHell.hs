@@ -42,9 +42,9 @@ instance Functor List where
 
 instance Applicative List where
   pure a = Cons a Nil
-  (<*>) Nil _ = Nil
-  (<*>) _ Nil = Nil
-  (<*>) (Cons f fs) xs = appendList (f <$> xs) (fs <*> xs)
+  Nil <*> _ = Nil
+  _ <*> Nil = Nil
+  (Cons f fs) <*> xs = appendList (f <$> xs) (fs <*> xs)
 
 instance Arbitrary a => Arbitrary (List a) where
   arbitrary = do
