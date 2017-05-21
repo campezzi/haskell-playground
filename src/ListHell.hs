@@ -74,7 +74,7 @@ instance Functor ZipList' where
   fmap f (ZipList' xs) = ZipList' $ fmap f xs
 
 instance Applicative ZipList' where
-  pure x = ZipList' $ pure x
+  pure x = ZipList' $ repeat' x
   ZipList' Nil <*> _ = ZipList' Nil
   _ <*> ZipList' Nil = ZipList' Nil
   ZipList' xs <*> ZipList' ys = ZipList' $ zip' xs ys
@@ -83,10 +83,17 @@ instance Applicative ZipList' where
       zip' _ Nil = Nil
       zip' (Cons f fs) (Cons v vs) = Cons (f v) (zip' fs vs)
 
+instance Arbitrary a => Arbitrary (ZipList' a) where
+  arbitrary = do
+    x <- arbitrary
+    xs <- arbitrary
+    frequency [(1, return $ ZipList' Nil), (2, return $ ZipList' (Cons x xs))]
+
 --
 check :: IO ()
 check = do
-  quickBatch $ functor trigger
-  quickBatch $ applicative trigger
+  quickBatch $ applicative triggerList
+  quickBatch $ applicative triggerZipList
   where
-    trigger = undefined :: List (Int, Bool, String)
+    triggerList = undefined :: List (Int, Bool, String)
+    triggerZipList = undefined :: ZipList' (Int, Bool, String)
