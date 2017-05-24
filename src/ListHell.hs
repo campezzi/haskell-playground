@@ -1,6 +1,5 @@
 module ListHell where
 
-import Control.Applicative
 import Test.QuickCheck
 import Test.QuickCheck.Checkers
 import Test.QuickCheck.Classes
