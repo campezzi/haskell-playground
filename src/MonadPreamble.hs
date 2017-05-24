@@ -10,8 +10,8 @@ sequencing' = putStrLn "blah" >> putStrLn "another thing"
 
 binding :: IO ()
 binding = do
-  name <- getLine
-  putStrLn name
+  name' <- getLine
+  putStrLn name'
 
 binding' :: IO ()
 binding' = getLine >>= putStrLn
@@ -19,11 +19,11 @@ binding' = getLine >>= putStrLn
 bas :: IO ()
 bas = do
   putStrLn "name:"
-  name <- getLine
-  putStrLn ("hello " ++ name)
+  name' <- getLine
+  putStrLn ("hello " ++ name')
 
 bas' :: IO ()
-bas' = putStrLn "name:" >> getLine >>= \name -> putStrLn ("hello" ++ name)
+bas' = putStrLn "name:" >> getLine >>= \name' -> putStrLn ("hello" ++ name')
 
 twiceWhenEven :: [Integer] -> [Integer]
 twiceWhenEven xs = do
@@ -69,21 +69,3 @@ mkCow name' age' weight' = do
   a <- noNegative age'
   w <- noNegative weight'
   weightCheck (Cow n a w)
-
---
-data Sumthing a b
-  = First a
-  | Second b
-  deriving (Eq, Show)
-
-instance Functor (Sumthing a) where
-  fmap _ (First a) = First a
-  fmap f (Second b) = Second (f b)
-
-instance Applicative (Sumthing a) where
-  pure = undefined
-  (<*>) = undefined
-
-instance Monad (Sumthing a) where
-  return = pure
-  (>>=) = undefined
