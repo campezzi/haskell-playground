@@ -45,6 +45,11 @@ instance Applicative List where
   _ <*> Nil = Nil
   (Cons f fs) <*> xs = appendList (f <$> xs) (fs <*> xs)
 
+instance Monad List where
+  return = pure
+  Nil >>= _ = Nil
+  xs >>= f = flatMap f xs
+
 instance Arbitrary a => Arbitrary (List a) where
   arbitrary = do
     x <- arbitrary
@@ -92,6 +97,7 @@ instance Arbitrary a => Arbitrary (ZipList' a) where
 check :: IO ()
 check = do
   quickBatch $ applicative triggerList
+  quickBatch $ monad triggerList
   quickBatch $ applicative triggerZipList
   where
     triggerList = undefined :: List (Int, Bool, String)
