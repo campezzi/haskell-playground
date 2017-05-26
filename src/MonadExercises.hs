@@ -3,6 +3,7 @@ module MonadExercises where
 import Test.QuickCheck
 import Test.QuickCheck.Checkers
 import Test.QuickCheck.Classes
+import Control.Monad
 
 data Nope a =
   NopeDotJpg
@@ -70,3 +71,30 @@ j outer = do
   inner <- outer
   value <- inner
   return value
+
+l1 :: Monad m => (a -> b) -> m a -> m b
+l1 f mx = do
+  x <- mx
+  return $ f x
+
+l2 :: Monad m => (a -> b -> c) -> m a -> m b -> m c
+l2 f mx my = do
+  x <- mx
+  y <- my
+  return $ f x y
+
+ap :: Monad m => m a -> m (a -> b) -> m b
+ap mx mf = do
+  x <- mx
+  f <- mf
+  return $ f x
+
+meh :: Monad m => [a] -> (a -> m b) -> m [b]
+meh [] _ = return []
+meh (x:xs) f = do
+  y <- f x
+  ys <- meh xs f
+  return (y:ys)
+
+flipType :: Monad m => [m a] -> m [a]
+flipType xs = meh xs id
