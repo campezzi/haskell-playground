@@ -3,7 +3,6 @@ module MonadExercises where
 import Test.QuickCheck
 import Test.QuickCheck.Checkers
 import Test.QuickCheck.Classes
-import Control.Monad
 
 data Nope a =
   NopeDotJpg
