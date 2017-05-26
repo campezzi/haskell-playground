@@ -63,3 +63,10 @@ checkMIdentity = do
   quickBatch $ monad trigger
   where
     trigger = undefined :: MIdentity (Int, Int, Int)
+
+--
+j :: Monad m => m (m a) -> m a
+j outer = do
+  inner <- outer
+  value <- inner
+  return value
