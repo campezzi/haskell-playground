@@ -137,3 +137,101 @@ checkList = do
   quickBatch $ traversable trigger
   where
     trigger = undefined :: List (Int, Int, [Int])
+
+-- Three
+data Three a b c =
+  Three a
+        b
+        c
+  deriving (Eq, Ord, Show)
+
+instance Functor (Three a b) where
+  fmap f (Three x y z) = Three x y (f z)
+
+instance Foldable (Three a b) where
+  foldMap f (Three _ _ z) = f z
+
+instance Traversable (Three a b) where
+  traverse f (Three x y z) = Three x y <$> f z
+
+instance (Arbitrary a, Arbitrary b, Arbitrary c) =>
+         Arbitrary (Three a b c) where
+  arbitrary = do
+    x <- arbitrary
+    y <- arbitrary
+    z <- arbitrary
+    return $ Three x y z
+
+instance (Eq a, Eq b, Eq c) => EqProp (Three a b c) where
+  (=-=) = eq
+
+checkThree :: IO ()
+checkThree = do
+  quickBatch $ functor trigger
+  quickBatch $ traversable trigger
+  where
+    trigger = undefined :: Three Int Int (Int, Int, [Int])
+
+-- Three'
+data Three' a b =
+  Three' a
+         b
+         b
+  deriving (Eq, Ord, Show)
+
+instance Functor (Three' a) where
+  fmap f (Three' x y z) = Three' x (f y) (f z)
+
+instance Foldable (Three' a) where
+  foldMap f (Three' _ y z) = mappend (f y) (f z)
+
+instance Traversable (Three' a) where
+  traverse f (Three' x y z) = liftA2 (Three' x) (f y) (f z)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b) where
+  arbitrary = do
+    x <- arbitrary
+    y <- arbitrary
+    z <- arbitrary
+    return $ Three' x y z
+
+instance (Eq a, Eq b) => EqProp (Three' a b) where
+  (=-=) = eq
+
+checkThree' :: IO ()
+checkThree' = do
+  quickBatch $ functor trigger
+  quickBatch $ traversable trigger
+  where
+    trigger = undefined :: Three' Int (Int, Int, [Int])
+
+-- S
+data S n a =
+  S (n a)
+    a
+  deriving (Eq, Ord, Show)
+
+instance Functor n => Functor (S n) where
+  fmap f (S x y) = S (fmap f x) (f y)
+
+instance (Foldable n) => Foldable (S n) where
+  foldMap f (S x y) = mappend (foldMap f x) (f y)
+
+instance (Traversable n) => Traversable (S n) where
+  traverse f (S x y) = liftA2 S (traverse f x) (f y)
+
+instance (Arbitrary a, Arbitrary (n a)) => Arbitrary (S n a) where
+  arbitrary = do
+    x <- arbitrary
+    y <- arbitrary
+    return $ S x y
+
+instance (Eq a, Eq (n a)) => EqProp (S n a) where
+  (=-=) = eq
+
+checkS :: IO ()
+checkS = do
+  quickBatch $ functor trigger
+  quickBatch $ traversable trigger
+  where
+    trigger = undefined :: S Maybe (Int, Int, [Int])
