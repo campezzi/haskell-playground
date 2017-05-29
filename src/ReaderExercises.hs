@@ -83,6 +83,9 @@ newtype Reader r a = Reader
   { runReader :: r -> a
   }
 
+ask :: Reader a a
+ask = Reader id
+
 -- (a -> b) -> Reader r a -> Reader r b
 -- (a -> b) -> Reader (r -> a) -> Reader (r -> b)
 instance Functor (Reader r) where
@@ -103,3 +106,19 @@ instance Monad (Reader r) where
 
 getDogRM' :: Reader Person Dog
 getDogRM' = Reader $ liftM2 Dog dogName address
+
+--
+hello :: String -> String
+hello name = "hello, " ++ name ++ "!"
+
+bye :: String -> String
+bye name = "bye, " ++ name ++ "."
+
+joinWithSpace :: String -> String -> String
+joinWithSpace a b = a ++ " " ++ b
+
+convo :: Reader String String
+convo = Reader $ liftA2 joinWithSpace hello bye
+
+printConvo :: String -> IO ()
+printConvo = print . runReader convo
