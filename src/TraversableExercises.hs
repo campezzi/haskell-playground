@@ -1,6 +1,7 @@
 module TraversableExercises where
 
-import Control.Applicative
+import Control.Applicative (liftA2, liftA3)
+import Data.Monoid ((<>))
 import Test.QuickCheck
 import Test.QuickCheck.Checkers
 import Test.QuickCheck.Classes
@@ -235,3 +236,45 @@ checkS = do
   quickBatch $ traversable trigger
   where
     trigger = undefined :: S Maybe (Int, Int, [Int])
+
+-- Tree
+data Tree a
+  = Empty
+  | Leaf a
+  | Node (Tree a)
+         a
+         (Tree a)
+  deriving (Eq, Show)
+
+instance Functor Tree where
+  fmap _ Empty = Empty
+  fmap f (Leaf a) = Leaf $ f a
+  fmap f (Node l x r) = Node (fmap f l) (f x) (fmap f r)
+
+instance Foldable Tree where
+  foldMap _ Empty = mempty
+  foldMap f (Leaf a) = f a
+  foldMap f (Node l x r) = (foldMap f l) <> f x <> (foldMap f r)
+
+instance Traversable Tree where
+  traverse _ Empty = pure Empty
+  traverse f (Leaf a) = Leaf <$> f a
+  traverse f (Node l x r) = liftA3 Node (traverse f l) (f x) (traverse f r)
+
+instance Arbitrary a => Arbitrary (Tree a) where
+  arbitrary = do
+    x <- arbitrary
+    l <- arbitrary
+    r <- arbitrary
+    frequency
+      [(1, return Empty), (2, return $ Leaf x), (2, return $ Node l x r)]
+
+instance Eq a => EqProp (Tree a) where
+  (=-=) = eq
+
+checkTree :: IO ()
+checkTree = do
+  quickBatch $ functor trigger
+  quickBatch $ traversable trigger
+  where
+    trigger = undefined :: Tree (Int, Int, [Int])
