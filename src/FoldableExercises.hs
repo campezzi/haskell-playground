@@ -13,13 +13,13 @@ elem' :: (Foldable t, Eq a) => a -> t a -> Bool
 elem' x t = foldr (\e a -> a || (x == e)) False t
 
 minimum' :: (Foldable t, Ord a) => t a -> Maybe a
-minimum' t = foldr maybeMin Nothing t
+minimum' = foldr maybeMin Nothing
   where
     maybeMin x Nothing = return x
     maybeMin x my = liftM (min x) my
 
 maximum' :: (Foldable t, Ord a) => t a -> Maybe a
-maximum' t = foldr maybeMax Nothing t
+maximum' = foldr maybeMax Nothing
   where
     maybeMax x Nothing = return x
     maybeMax x my = liftM (max x) my
