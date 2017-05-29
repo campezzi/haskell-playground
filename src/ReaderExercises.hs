@@ -1,7 +1,7 @@
 module ReaderExercises where
 
 import Control.Applicative (liftA2)
-import Control.Monad (join, liftM2)
+import Control.Monad (liftM2)
 import Data.Char
 
 cap :: [Char] -> [Char]
@@ -83,19 +83,23 @@ newtype Reader r a = Reader
   { runReader :: r -> a
   }
 
--- fmap: (a -> b) -> Reader (r -> a) -> Reader (r -> b)
+-- (a -> b) -> Reader r a -> Reader r b
+-- (a -> b) -> Reader (r -> a) -> Reader (r -> b)
 instance Functor (Reader r) where
   fmap f (Reader a) = Reader $ f . a
 
--- <*>: Reader (r -> a -> b) -> Reader (r -> a) -> Reader (r -> b)
+-- Reader r (a -> b) -> Reader r a -> Reader r b
+-- Reader (r -> a -> b) -> Reader (r -> a) -> Reader (r -> b)
 instance Applicative (Reader r) where
   pure a = Reader $ \_ -> a
   (Reader fab) <*> (Reader fa) = Reader $ \r -> fab r (fa r)
 
--- >>=: Reader (r -> a) -> (a -> Reader (r -> b)) -> Reader (r -> b)
+-- Reader r a -> (a -> Reader r b) -> Reader r b
+-- Reader (r -> a) -> (a -> Reader (r -> b)) -> Reader (r -> b)
 instance Monad (Reader r) where
-  return = pure
-  (Reader ra) >>= arb = join (Reader $ arb . ra)
+  (Reader ra) >>= arb = Reader $ \r -> runReader (arb . ra $ r) $ r
+  -- This looks better but doesn't follow the book hints:
+  -- (Reader ra) >>= arb = join (Reader $ arb . ra)
 
 getDogRM' :: Reader Person Dog
 getDogRM' = Reader $ liftM2 Dog dogName address
