@@ -100,7 +100,7 @@ instance Applicative (Reader r) where
 -- Reader r a -> (a -> Reader r b) -> Reader r b
 -- Reader (r -> a) -> (a -> Reader (r -> b)) -> Reader (r -> b)
 instance Monad (Reader r) where
-  (Reader ra) >>= arb = Reader $ \r -> runReader (arb . ra $ r) $ r
+  (Reader ra) >>= arb = Reader $ \r -> runReader (arb (ra r)) r
   -- This looks better but doesn't follow the book hints:
   -- (Reader ra) >>= arb = join (Reader $ arb . ra)
 
