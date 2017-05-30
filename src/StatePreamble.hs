@@ -47,4 +47,26 @@ rollDieThreeTimes' :: State StdGen (Die, Die, Die)
 rollDieThreeTimes' = liftA3 (,,) rollDie' rollDie' rollDie'
 
 nDie :: Int -> State StdGen [Die]
-nDie n = replicateM n rollDie
+nDie n = replicateM n rollDie'
+
+rollsToGetToTwenty :: StdGen -> Int
+rollsToGetToTwenty g = go 0 0 g
+  where
+    go :: Int -> Int -> StdGen -> Int
+    go total count gen
+      | total >= 20 = count
+      | otherwise = go (total + die) (count + 1) nextG
+      where
+        (die, nextG) = randomR (1, 6) gen
+
+-- TODO: refactor to use State?
+rollsToGetToN :: Int -> StdGen -> (Int, [Die])
+rollsToGetToN target g = go 0 0 [] g
+  where
+    go :: Int -> Int -> [Die] -> StdGen -> (Int, [Die])
+    go total count dice gen
+      | total >= target = (count, dice)
+      | otherwise = go (total + die) (count + 1) allDice nextG
+      where
+        (die, nextG) = randomR (1, 6) gen
+        allDice = (:) (intToDie die) dice
