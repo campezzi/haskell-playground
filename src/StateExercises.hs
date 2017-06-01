@@ -30,3 +30,18 @@ instance Monad (MyState s) where
     MyState $ \s ->
       let (a, s') = fs s
       in runMyState (f a) s'
+
+get :: MyState s s
+get = MyState $ \s -> (s, s)
+
+put :: s -> MyState s ()
+put s = MyState $ \_ -> ((), s)
+
+exec :: MyState s a -> s -> s
+exec (MyState f) = snd . f
+
+eval :: MyState s a -> s -> a
+eval (MyState f) = fst . f
+
+modify :: (s -> s) -> MyState s ()
+modify f = MyState $ \s -> ((), f s)

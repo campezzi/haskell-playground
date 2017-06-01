@@ -86,6 +86,9 @@ newtype Reader r a = Reader
 ask :: Reader a a
 ask = Reader id
 
+asks :: (r -> a) -> Reader r a
+asks = Reader
+
 -- (a -> b) -> Reader r a -> Reader r b
 -- (a -> b) -> Reader (r -> a) -> Reader (r -> b)
 instance Functor (Reader r) where
@@ -100,6 +103,7 @@ instance Applicative (Reader r) where
 -- Reader r a -> (a -> Reader r b) -> Reader r b
 -- Reader (r -> a) -> (a -> Reader (r -> b)) -> Reader (r -> b)
 instance Monad (Reader r) where
+  return = pure
   (Reader ra) >>= arb = Reader $ \r -> runReader (arb (ra r)) r
   -- This looks better but doesn't follow the book hints:
   -- (Reader ra) >>= arb = join (Reader $ arb . ra)

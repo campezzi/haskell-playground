@@ -41,7 +41,7 @@ bolt :: Integer -> Bool
 bolt = liftA2 (&&) (> 3) (< 8)
 
 sequA :: Integral a => a -> [Bool]
-sequA m = sequenceA [(> 3), (< 8), even] m
+sequA = sequenceA [(> 3), (< 8), even]
 
 s' :: Maybe Integer
 s' = summed <$> liftA2 (,) xs ys
