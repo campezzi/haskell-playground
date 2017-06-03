@@ -1,5 +1,6 @@
 module StateExercises where
 
+import Control.Applicative (liftA3)
 import System.Random
 
 newtype MyState s a = MyState
@@ -80,3 +81,7 @@ chainedRolls = do
   fifty <- rollsToGetTo 50
   hundred <- rollsToGetTo 100
   return (thirty, fifty, hundred)
+
+chainedRolls' :: MyState RollHistory (Int, Int, Int)
+chainedRolls' =
+  liftA3 (,,) (rollsToGetTo 30) (rollsToGetTo 50) (rollsToGetTo 100)
