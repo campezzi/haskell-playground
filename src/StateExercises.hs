@@ -1,5 +1,7 @@
 module StateExercises where
 
+import System.Random
+
 newtype MyState s a = MyState
   { runMyState :: s -> (a, s)
   }
@@ -45,3 +47,36 @@ eval (MyState f) = fst . f
 
 modify :: (s -> s) -> MyState s ()
 modify f = MyState $ \s -> ((), f s)
+
+--
+data RollHistory = RollHistory
+  { dice :: [Int]
+  , total :: Int
+  , gen :: StdGen
+  } deriving (Show)
+
+emptyHistory :: Int -> RollHistory
+emptyHistory seed = RollHistory [] 0 (mkStdGen seed)
+
+roll :: MyState RollHistory Int
+roll =
+  MyState $ \s ->
+    let (value, nextGen) = randomR (1, 6) (gen s)
+        s' = RollHistory (value : (dice s)) (value + (total s)) nextGen
+    in (value, s')
+
+rollsToGetTo :: Int -> MyState RollHistory Int
+rollsToGetTo target =
+  MyState $ \s ->
+    let s' = go s
+        go history
+          | total history >= target = history
+          | otherwise = go $ exec roll history
+    in (length $ dice s', s')
+
+chainedRolls :: MyState RollHistory (Int, Int, Int)
+chainedRolls = do
+  thirty <- rollsToGetTo 30
+  fifty <- rollsToGetTo 50
+  hundred <- rollsToGetTo 100
+  return (thirty, fifty, hundred)
