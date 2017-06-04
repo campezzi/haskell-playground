@@ -22,5 +22,5 @@ executable playground
                        checkers, 
                        transformers, 
                        random, 
-                       trifecta == 1.5.2
+                       trifecta
   other-modules:       LearnParsers

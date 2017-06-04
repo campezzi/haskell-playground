@@ -17,21 +17,22 @@ oneTwo = char '1' >> char '2'
 oneTwo' :: Parser a
 oneTwo' = oneTwo >> stop
 
-testParse :: Parser Char -> IO ()
-testParse p = print $ parseString p mempty "123"
+oneTwoThree :: Parser String
+oneTwoThree = string "123"
 
-pNL :: String -> IO ()
-pNL s = putStrLn ('\n' : s)
+oneTwoThreeS :: Parser String
+oneTwoThreeS = choice [string "123", string "12", string "1", stop]
+
+oneTwoThreeC :: Parser Char
+oneTwoThreeC = char '1' >> char '2' >> char '3'
+
+--
+testParse :: Show a => Parser a -> String -> IO ()
+testParse p s = print $ parseString p mempty s
 
 main :: IO ()
 main = do
-  pNL "stop:"
-  testParse stop
-  pNL "one:"
-  testParse one
-  pNL "one':"
-  testParse one'
-  pNL "oneTwo:"
-  testParse oneTwo
-  pNL "oneTwo'"
-  testParse oneTwo'
+  testParse oneTwoThreeS "1"
+  testParse oneTwoThreeS "12"
+  testParse oneTwoThreeS "123"
+  testParse oneTwoThreeC "123"
