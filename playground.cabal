@@ -22,5 +22,6 @@ executable playground
                        checkers, 
                        transformers, 
                        random, 
-                       trifecta
+                       trifecta,
+                       raw-strings-qq
   other-modules:       AltParsing
