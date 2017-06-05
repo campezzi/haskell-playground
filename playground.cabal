@@ -23,4 +23,4 @@ executable playground
                        transformers, 
                        random, 
                        trifecta
-  other-modules:       LearnParsers
+  other-modules:       AltParsing
