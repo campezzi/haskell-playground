@@ -18,10 +18,15 @@ executable playground
   main-is:             Main.hs
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
-                       QuickCheck, 
-                       checkers, 
-                       transformers, 
-                       random, 
+                       QuickCheck,
+                       checkers,
+                       transformers,
+                       random,
                        trifecta,
                        raw-strings-qq
+  other-modules:       QuickCheck,
+                       checkers,
+                       transformers,
+                       random,
+                       trifecta
   other-modules:       AltParsing
