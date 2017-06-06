@@ -2,22 +2,25 @@
 
 module Text.Fractions where
 
+import Control.Applicative
+import Data.Attoparsec.Text (parseOnly)
 import Data.Ratio ((%))
+import Data.String (IsString)
 import Text.Trifecta
 
-badFraction :: String
+badFraction :: IsString s => s
 badFraction = "1/0"
 
-alsoBad :: String
+alsoBad :: IsString s => s
 alsoBad = "10"
 
-shouldWork :: String
+shouldWork :: IsString s => s
 shouldWork = "1/2"
 
-shouldAlsoWork :: String
+shouldAlsoWork :: IsString s => s
 shouldAlsoWork = "2/1"
 
-parseFraction :: Parser Rational
+parseFraction :: (Monad m, TokenParsing m) => m Rational
 parseFraction = do
   numerator <- decimal
   char '/'
@@ -26,15 +29,16 @@ parseFraction = do
     0 -> fail "Denominator cannot be zero"
     _ -> return (numerator % denominator)
 
-intParser :: Parser Integer
-intParser = do
-  n <- integer
-  eof
-  return n
-
-testFractions :: IO ()
-testFractions = do
+testTrifecta :: IO ()
+testTrifecta = do
   print $ parseString parseFraction mempty shouldWork
   print $ parseString parseFraction mempty shouldAlsoWork
   print $ parseString parseFraction mempty alsoBad
   print $ parseString parseFraction mempty badFraction
+
+testAttoparsec :: IO ()
+testAttoparsec = do
+  print $ parseOnly parseFraction shouldWork
+  print $ parseOnly parseFraction shouldAlsoWork
+  print $ parseOnly parseFraction alsoBad
+  print $ parseOnly parseFraction badFraction
