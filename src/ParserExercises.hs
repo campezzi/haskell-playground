@@ -37,8 +37,7 @@ instance Ord SemVer where
     | cMajor /= EQ = cMajor
     | cMinor /= EQ = cMinor
     | cPatch /= EQ = cPatch
-    | cRelease /= EQ = cRelease
-    | otherwise = EQ
+    | otherwise = cRelease
     where
       cMajor = compare ma mb
       cMinor = compare ia ib
