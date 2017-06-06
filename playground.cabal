@@ -26,5 +26,7 @@ executable playground
                        raw-strings-qq,
                        bytestring,
                        containers,
-                       text
-  other-modules:       Data.Ini
+                       text,
+                       attoparsec,
+                       aeson
+  other-modules:       ParserExercises
