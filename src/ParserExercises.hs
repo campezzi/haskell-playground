@@ -37,12 +37,11 @@ instance Ord SemVer where
     | cMajor /= EQ = cMajor
     | cMinor /= EQ = cMinor
     | cPatch /= EQ = cPatch
-    | otherwise = cRelease
+    | otherwise = compareRelease ra rb
     where
       cMajor = compare ma mb
       cMinor = compare ia ib
       cPatch = compare pa pb
-      cRelease = compareRelease ra rb
 
 compareRelease :: Release -> Release -> Ordering
 compareRelease [] [] = EQ
