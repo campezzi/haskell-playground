@@ -23,10 +23,8 @@ executable playground
                        transformers,
                        random,
                        trifecta,
-                       raw-strings-qq
-  other-modules:       QuickCheck,
-                       checkers,
-                       transformers,
-                       random,
-                       trifecta
-  other-modules:       AltParsing
+                       raw-strings-qq,
+                       bytestring,
+                       containers,
+                       text
+  other-modules:       Data.Ini
