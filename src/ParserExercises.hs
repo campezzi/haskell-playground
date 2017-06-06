@@ -33,33 +33,23 @@ data SemVer =
   deriving (Eq, Show)
 
 instance Ord SemVer where
-  compare x y
+  compare (SemVer ma ia pa ra _) (SemVer mb ib pb rb _)
     | cMajor /= EQ = cMajor
     | cMinor /= EQ = cMinor
     | cPatch /= EQ = cPatch
     | cRelease /= EQ = cRelease
     | otherwise = EQ
     where
-      cMajor = compareMajor x y
-      cMinor = compareMinor x y
-      cPatch = comparePatch x y
-      cRelease = compareRelease x y
+      cMajor = compare ma mb
+      cMinor = compare ia ib
+      cPatch = compare pa pb
+      cRelease = compareRelease ra rb
 
-compareMajor :: SemVer -> SemVer -> Ordering
-compareMajor (SemVer x _ _ _ _) (SemVer y _ _ _ _) = compare x y
-
-compareMinor :: SemVer -> SemVer -> Ordering
-compareMinor (SemVer _ x _ _ _) (SemVer _ y _ _ _) = compare x y
-
-comparePatch :: SemVer -> SemVer -> Ordering
-comparePatch (SemVer _ _ x _ _) (SemVer _ _ y _ _) = compare x y
-
-compareRelease :: SemVer -> SemVer -> Ordering
-compareRelease (SemVer _ _ _ x _) (SemVer _ _ _ y _)
-  | x == [] && y == [] = EQ
-  | x == [] && y /= [] = GT
-  | x /= [] && y == [] = LT
-  | otherwise = go x y
+compareRelease :: Release -> Release -> Ordering
+compareRelease [] [] = EQ
+compareRelease [] (_:_) = GT
+compareRelease (_:_) [] = LT
+compareRelease x y = go x y
   where
     go [] [] = EQ
     go (_:_) [] = GT
