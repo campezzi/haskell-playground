@@ -64,3 +64,34 @@ eitherT femc famc (EitherT mea) = do
   case v of
     Left e -> femc e
     Right a -> famc a
+
+--
+maybeInt :: Int -> Maybe Int
+maybeInt x
+  | odd x = Nothing
+  | otherwise = Just x
+
+readSix :: Int -> ReaderT Int Maybe String
+readSix x =
+  ReaderT $ \_ ->
+    if x == 6
+      then Just "Six"
+      else Nothing
+
+newtype ReaderT r m a = ReaderT
+  { runReaderT :: r -> m a
+  }
+
+instance (Functor m) => Functor (ReaderT r m) where
+  fmap f (ReaderT rma) = ReaderT $ \r -> fmap f (rma r)
+
+instance (Applicative m) => Applicative (ReaderT r m) where
+  pure a = ReaderT $ (pure . pure) a
+  (ReaderT ramb) <*> (ReaderT rma) = ReaderT $ liftA2 (<*>) ramb rma
+
+instance (Monad m) => Monad (ReaderT r m) where
+  return = pure
+  (ReaderT rma) >>= f =
+    ReaderT $ \r -> do
+      a <- rma r
+      runReaderT (f a) r
