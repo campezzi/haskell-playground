@@ -3,6 +3,7 @@
 module TransformersPreamble where
 
 import Control.Applicative (liftA2)
+import Control.Monad.Trans.Class
 
 newtype MaybeT m a = MaybeT
   { runMaybeT :: m (Maybe a)
@@ -95,6 +96,9 @@ instance (Monad m) => Monad (ReaderT r m) where
     ReaderT $ \r -> do
       a <- rma r
       runReaderT (f a) r
+
+instance MonadTrans (ReaderT r) where
+  lift = ReaderT . const
 
 --
 newtype StateT s m a = StateT
