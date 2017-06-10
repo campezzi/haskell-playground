@@ -28,5 +28,6 @@ executable playground
                        containers,
                        text,
                        attoparsec,
-                       aeson
-  other-modules:       OuterInner
+                       aeson,
+                       scotty
+  other-modules:       HelloScotty
