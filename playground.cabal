@@ -30,4 +30,4 @@ executable playground
                        attoparsec,
                        aeson,
                        scotty
-  other-modules:       HelloScotty
+  other-modules:       TransformerExercises

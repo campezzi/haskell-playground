@@ -1,6 +1,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 
-module TransformersPreamble where
+module TransformerExercises where
 
 import Control.Applicative (liftA2)
 import Control.Monad.Trans.Class
