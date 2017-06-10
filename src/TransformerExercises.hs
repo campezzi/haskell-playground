@@ -3,6 +3,7 @@
 module TransformerExercises where
 
 import Control.Applicative (liftA2)
+import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 
 newtype MaybeT m a = MaybeT
@@ -28,13 +29,16 @@ instance (Monad m) => Monad (MaybeT m) where
         Nothing -> return Nothing
         Just x -> runMaybeT (f x)
 
+instance MonadTrans MaybeT where
+  lift = MaybeT . fmap Just
+
+instance (MonadIO m) => MonadIO (MaybeT m) where
+  liftIO = lift . liftIO
+
 --
 newtype EitherT e m a = EitherT
   { runEitherT :: m (Either e a)
   }
-
-instance (Show (m (Either e a))) => Show (EitherT e m a) where
-  show (EitherT mea) = "EitherT " ++ show mea
 
 instance (Functor m) => Functor (EitherT e m) where
   fmap f (EitherT mea) = EitherT $ (fmap . fmap) f mea
@@ -51,6 +55,9 @@ instance (Monad m) => Monad (EitherT e m) where
       case v of
         Left a -> return $ Left a
         Right b -> runEitherT (f b)
+
+instance MonadTrans (EitherT e) where
+  lift = EitherT . fmap Right
 
 swapEither :: Either e a -> Either a e
 swapEither (Left x) = Right x
@@ -100,6 +107,9 @@ instance (Monad m) => Monad (ReaderT r m) where
 instance MonadTrans (ReaderT r) where
   lift = ReaderT . const
 
+instance (MonadIO m) => MonadIO (ReaderT r m) where
+  liftIO = lift . liftIO
+
 --
 newtype StateT s m a = StateT
   { runStateT :: s -> m (a, s)
@@ -125,3 +135,12 @@ instance (Monad m) => Monad (StateT s m) where
     StateT $ \s -> do
       (a, s') <- smas s
       runStateT (f a) s'
+
+instance MonadTrans (StateT s) where
+  lift ma =
+    StateT $ \s -> do
+      a <- ma
+      return (a, s)
+
+instance (MonadIO m) => MonadIO (StateT s m) where
+  liftIO = lift . liftIO
