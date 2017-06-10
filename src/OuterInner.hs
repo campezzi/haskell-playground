@@ -15,3 +15,6 @@ eitherUnwrap = runExceptT maybeUnwrap
 
 readerUnwrap :: () -> IO (Either String (Maybe Int))
 readerUnwrap = runReaderT eitherUnwrap
+
+embedded' :: MaybeT (ExceptT String (ReaderT () IO)) Int
+embedded' = MaybeT (ExceptT (ReaderT $ pure . const (Right (Just 1))))
