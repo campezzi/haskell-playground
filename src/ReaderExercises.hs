@@ -126,3 +126,10 @@ convo = Reader $ liftA2 joinWithSpace hello bye
 
 printConvo :: String -> IO ()
 printConvo = print . runReader convo
+
+--
+rDec :: Num a => Reader a a
+rDec = Reader $ subtract 1
+
+rShow :: Show a => Reader a String
+rShow = Reader $ show

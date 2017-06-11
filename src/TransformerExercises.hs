@@ -24,8 +24,8 @@ instance (Monad m) => Monad (MaybeT m) where
   return = pure
   (MaybeT ma) >>= f =
     MaybeT $ do
-      v <- ma
-      case v of
+      a <- ma
+      case a of
         Nothing -> return Nothing
         Just x -> runMaybeT (f x)
 
@@ -51,10 +51,10 @@ instance (Monad m) => Monad (EitherT e m) where
   return = pure
   (EitherT mea) >>= f =
     EitherT $ do
-      v <- mea
-      case v of
-        Left a -> return $ Left a
-        Right b -> runEitherT (f b)
+      ea <- mea
+      case ea of
+        Left e -> return $ Left e
+        Right a -> runEitherT (f a)
 
 instance MonadTrans (EitherT e) where
   lift = EitherT . fmap Right
@@ -144,3 +144,17 @@ instance MonadTrans (StateT s) where
 
 instance (MonadIO m) => MonadIO (StateT s m) where
   liftIO = lift . liftIO
+
+--
+rPrintAndInc :: (Num a, Show a) => ReaderT a IO a
+rPrintAndInc =
+  ReaderT $ \r -> do
+    liftIO $ putStrLn $ "Hi: " ++ (show r)
+    return (r + 1)
+
+sPrintIncAccum :: (Num a, Show a) => StateT a IO String
+sPrintIncAccum =
+  StateT $ \s -> do
+    let stateAsString = show s
+    liftIO $ putStrLn $ "Hi: " ++ stateAsString
+    return (stateAsString, s + 1)
