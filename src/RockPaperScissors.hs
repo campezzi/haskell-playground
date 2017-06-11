@@ -70,7 +70,7 @@ friendly o =
 playRound :: StateT Scoreboard IO Outcome
 playRound =
   StateT $ \s -> do
-    opponent <- randomIO :: IO Choice
+    opponent <- randomIO
     putStrLn "Type your choice!"
     player <- fmap read getLine
     let outcome = calculateOutcome opponent player
