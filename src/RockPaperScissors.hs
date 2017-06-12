@@ -1,6 +1,6 @@
 module RockPaperScissors where
 
-import Control.Monad (guard, replicateM)
+import Control.Monad (forever, guard, replicateM)
 import Control.Monad.Trans.State
 import System.Random
 
@@ -77,6 +77,9 @@ playRound =
     putStrLn $
       "Your opponent picked " ++ (show opponent) ++ ". " ++ (friendly outcome)
     return (outcome, updateScoreboard s outcome)
+
+playForever :: IO ([Outcome], Scoreboard)
+playForever = runStateT (forever playRound) newScoreboard
 
 newGame :: Int -> IO ()
 newGame rounds = do
