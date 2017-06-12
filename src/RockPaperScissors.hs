@@ -1,6 +1,6 @@
 module RockPaperScissors where
 
-import Control.Monad (forever, guard, replicateM)
+import Control.Monad (forever, replicateM)
 import Control.Monad.Trans.State
 import System.Random
 
