@@ -3,6 +3,7 @@ module RockPaperScissors where
 import Control.Monad (forever, replicateM)
 import Control.Monad.Trans.State
 import System.Random
+import Text.Read (readMaybe)
 
 data Choice
   = Rock
@@ -67,18 +68,24 @@ friendly o =
     Lose -> "You lose!"
     Draw -> "It's a draw!"
 
-playRound :: StateT Scoreboard IO Outcome
+playRound :: StateT Scoreboard IO (Maybe Outcome)
 playRound =
   StateT $ \s -> do
     opponent <- randomIO
     putStrLn "Type your choice!"
-    player <- fmap read getLine
-    let outcome = calculateOutcome opponent player
-    putStrLn $
-      "Your opponent picked " ++ (show opponent) ++ ". " ++ (friendly outcome)
-    return (outcome, updateScoreboard s outcome)
+    maybeChoice <- fmap readMaybe getLine
+    case maybeChoice of
+      Just player -> do
+        let outcome = calculateOutcome opponent player
+        putStrLn $
+          "Your opponent picked " ++
+          (show opponent) ++ ". " ++ (friendly outcome)
+        return (Just outcome, updateScoreboard s outcome)
+      Nothing -> do
+        putStrLn "Invalid choice. Try Rock, Paper or Scissors"
+        return (Nothing, s)
 
-playForever :: IO ([Outcome], Scoreboard)
+playForever :: IO ([Maybe Outcome], Scoreboard)
 playForever = runStateT (forever playRound) newScoreboard
 
 newGame :: Int -> IO ()
