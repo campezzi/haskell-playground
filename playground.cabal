@@ -29,4 +29,4 @@ library
                        attoparsec,
                        aeson,
                        scotty
-  other-modules:       RockPaperScissors
+  other-modules:       Todo
